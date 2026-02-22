@@ -31,7 +31,7 @@ def run(keyword, filter_name, max_page, headless, output_base_dir):
     
     # 지정한 루트 폴더 안에 키워드별 서브 폴더 생성
     folder = os.path.join(output_base_dir, keyword.replace('+', '_'))
-    filename = f"coupang_{keyword}_{today}.csv"
+    filename = f"{keyword}_{filter_type}_{today}.csv"
     
     scraper.save_to_csv(folder_path=folder, filename=filename)
     print(f"✨ 저장 완료: {folder}/{filename}")
