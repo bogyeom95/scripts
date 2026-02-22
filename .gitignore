@@ -1,0 +1,8 @@
+results
+error_screenshots
+.env
+__pycache__
+*.log
+*.csv
+.DS_Store
+*.egg-info
