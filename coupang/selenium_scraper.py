@@ -181,8 +181,21 @@ class CoupangSeleniumScraper:
 
                 # 6. 링크 추출
                 link_tag = item.select_one('a[class*="search-product-link"]')
-                link = f"https://www.coupang.com{link_tag['href']}" if link_tag else ""
 
+                # 만약 클래스명으로 못 찾았다면, 해당 아이템 내의 첫 번째 a 태그를 시도
+                if not link_tag:
+                    link_tag = item.find('a', href=True)
+
+                if link_tag and 'href' in link_tag.attrs:
+                    raw_href = link_tag['href']
+                    # 이미 full URL인 경우와 relative path인 경우 처리
+                    if raw_href.startswith('http'):
+                        link = raw_href
+                    else:
+                        # URL에 중복 슬래시 방지
+                        link = f"https://www.coupang.com{raw_href}"
+                else:
+                    link = ""
                 # 최종 데이터 저장
                 self.results.append({
                     '수집시간': current_time,
