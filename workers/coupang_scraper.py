@@ -1,9 +1,10 @@
 import argparse
 import time
+import os
 from coupang.selenium_scraper import CoupangSeleniumScraper
 from coupang.enums import FilterType
 
-def run(keyword, filter_name, max_page, headless):
+def run(keyword, filter_name, max_page, headless, output_base_dir):
     # 1. 문자열로 받은 필터 이름을 Enum 타입으로 변환
     try:
         filter_type : str = FilterType[filter_name.upper()].value
@@ -27,7 +28,9 @@ def run(keyword, filter_name, max_page, headless):
 
     # 3. 결과 저장
     today = time.strftime("%Y%m%d")
-    folder = f"results/{keyword.replace('+', '_')}" # 폴더명에 + 기호 방지
+    
+    # 지정한 루트 폴더 안에 키워드별 서브 폴더 생성
+    folder = os.path.join(output_base_dir, keyword.replace('+', '_'))
     filename = f"coupang_{keyword}_{today}.csv"
     
     scraper.save_to_csv(folder_path=folder, filename=filename)
@@ -46,6 +49,10 @@ if __name__ == "__main__":
                         help="스크래핑할 최대 페이지 수 (기본값: 1)")
     parser.add_argument("--headless", action="store_true", 
                         help="브라우저 창을 띄우지 않고 실행")
+    
+    # ✨ 결과 폴더 지정 인자 추가
+    parser.add_argument("-o", "--output", default="results", 
+                        help="결과물을 저장할 루트 폴더 경로 (기본값: results)")
 
     args = parser.parse_args()
 
@@ -53,5 +60,6 @@ if __name__ == "__main__":
         keyword=args.keyword, 
         filter_name=args.filter, 
         max_page=args.pages, 
-        headless=args.headless
+        headless=args.headless,
+        output_base_dir=args.output  # 인자 전달
     )
